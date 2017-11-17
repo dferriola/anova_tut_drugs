@@ -1,7 +1,6 @@
 library(tidyr)
 library(faraway)
 library(ggplot2)
-library(ggthemes)
 pain_minutes=c(14,24,12,25,20,14,17,18,22,29,36,20)
 drug=c(rep("A",4), rep("B",4), rep("C",4))
 df=data.frame(pain_minutes,drug)
@@ -103,3 +102,8 @@ TukeyHSD(results, conf.level=0.95)
 ##From this we can see that C-A and C-B are significant (p-value 0.1883 and p-value 0.1102)
 ##and B-A is not significant (p-value 0.9315) and confirms the Bonferroni correction
 
+oneway.test(pain_minutes~drug)
+#One-way analysis of means (not assuming equal variances)
+
+#data:  pain_minutes and drug
+#F = 2.6898, num df = 2.0000, denom df = 4.8376, p-value = 0.1639
