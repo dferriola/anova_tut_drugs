@@ -11,7 +11,63 @@ summary(df)
 plot(pain_minutes~drug, data=df)
 pl=ggplot(df, aes (x=drug, y=pain_minutes))+
 	geom_boxplot(fill="grey90", colour="steelblue")
-pl+theme_fivethirtyeight()	
+pl+theme_fivethirtyeight()
+#use lm function to look at parameter estimates
+drug.mod1=lm(pain_minutes~drug, data=df)	
+summary(drug.mod1)
+
+#Call:
+#lm(formula = pain_minutes ~ drug, data = df)
+
+#Residuals:
+#   Min     1Q Median     3Q    Max 
+#-6.750 -4.750  0.250  3.375  9.250 
+
+#Coefficients:
+#            Estimate Std. Error t value Pr(>|t|)    
+#(Intercept)   18.750      2.945   6.367  0.00013 ***
+#drugB         -1.500      4.165  -0.360  0.72705    
+#drugC          8.000      4.165   1.921  0.08695 .  
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+#Residual standard error: 5.89 on 9 degrees of freedom
+#Multiple R-squared:  0.4006,    Adjusted R-squared:  0.2674 
+#F-statistic: 3.007 on 2 and 9 DF,  p-value: 0.09995
+
+##The model output shows some evidence of a difference in drug c. 
+##an analysis of variance table can be created for this model
+
+anova(drug.mod1)
+
+Analysis of Variance Table
+
+#Response: pain_minutes
+#          Df Sum Sq Mean Sq F value  Pr(>F)  
+#drug       2 208.67 104.333  3.0072 0.09995 .
+#Residuals  9 312.25  34.694                  
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+##this shows there are differences between the groups
+##confint can calculate the confidence intervals with default 95%
+
+confint(drug.mod1)
+
+#                 2.5 %    97.5 %
+#(Intercept)  12.087722 25.412278
+#drugB       -10.921884  7.921884
+#drugC        -1.421884 17.421884
+
+##This model can be plotted against fitted values to investigate model assumptions
+
+drug.mod = data.frame(Fitted = fitted(drug.mod1),
+  Residuals = resid(drug.mod1), Treatment = df$drug)
+
+##create the plot
+
+ggplot(drug.mod, aes(Fitted, Residuals, colour = drug)) + geom_point()
+
 #aov() to fit ANOVA models
 results=aov(pain_minutes~drug, data=df)
 summary(results)
@@ -46,3 +102,4 @@ TukeyHSD(results, conf.level=0.95)
 
 ##From this we can see that C-A and C-B are significant (p-value 0.1883 and p-value 0.1102)
 ##and B-A is not significant (p-value 0.9315) and confirms the Bonferroni correction
+
